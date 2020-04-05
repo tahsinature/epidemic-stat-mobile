@@ -1,13 +1,14 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+// import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 
 import Home from '../../screens/Home/Home';
 import Profile from '../..//screens/Profile/Profile';
 
 import colors from '../../constants/colors';
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 const bottomTab = () => (
   <Tab.Navigator initialRouteName="Home" shifting={true}>

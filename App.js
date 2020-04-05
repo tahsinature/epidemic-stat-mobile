@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StatusBar} from 'react-native';
 import {connect} from 'react-redux';
 
@@ -11,13 +11,15 @@ import DataFetchError from './src/components/DataFetchError/DataFetchError';
 import UpdateNeeded from './src/components/UpdateNeeded/UpdateNeeded';
 import Snackbar from './src/components/Snackbar/Snackbar';
 import TestComponent from './src/components/TestComponent/TestComponent';
+import IntroAlert from './src/components/IntroAlert/IntroAlert';
 
-const app = props => {
+const app = (props) => {
+  const [hasIntroPassed, passIntro] = useState(false);
   useEffect(() => {
     bootUp();
   }, []);
 
-  const mainContent = (
+  const mainContent = hasIntroPassed ? (
     <>
       {props.appState.applicationUpdate.hasAppUpdate ? (
         <UpdateNeeded />
@@ -28,6 +30,8 @@ const app = props => {
         </>
       )}
     </>
+  ) : (
+    <IntroAlert clicked={() => passIntro(true)} />
   );
 
   return (
@@ -40,7 +44,7 @@ const app = props => {
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   appState: state.appReducer,
 });
 

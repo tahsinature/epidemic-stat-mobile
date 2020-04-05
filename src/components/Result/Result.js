@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Button} from 'react-native-paper';
 import {material, materialColors, human} from 'react-native-typography';
 import numeral from 'numeral';
+import {heightPercentageToDP as hp, widthPercentageToDP as wp} from 'react-native-responsive-screen';
 
 import {retryHomeResult} from '../../utils';
 import colors from '../../constants/colors';
@@ -10,7 +11,7 @@ import colors from '../../constants/colors';
 const result = ({result}) => {
   const {countryName, death, infected, recovered} = result;
 
-  const hasAllData = [death, infected, recovered].every(ele => typeof ele === 'number');
+  const hasAllData = [death, infected, recovered].every((ele) => typeof ele === 'number');
 
   const digits = [
     {name: 'Death', value: death, color: 'rgba(206, 71, 76, 0.200)'},
@@ -28,16 +29,16 @@ const result = ({result}) => {
   );
 
   const capsule = (name, value, color) => {
-    const formats = ['0,', '0a', '0,0e+0'];
+    const formats = ['0,', '0a'];
     const [currentFormat, nextFormat] = useState(formats[0]);
 
     return (
-      <View style={{flexDirection: 'row', alignItems: 'center', height: 100}}>
+      <View style={{flexDirection: 'row', alignItems: 'center', height: hp(12.6)}}>
         <View
           style={{
             backgroundColor: 'rgba(116, 147, 178, 0.200)',
             width: 100,
-            height: 100,
+            height: '100%',
             borderColor: color,
             borderLeftWidth: 2,
             borderTopWidth: 2,
@@ -69,7 +70,7 @@ const result = ({result}) => {
         </View>
       </View>
       <View style={styles.resultBox}>
-        {digits.map(ele => (
+        {digits.map((ele) => (
           <View style={{marginVertical: 2}} key={ele.name}>
             {capsule(ele.name, ele.value, ele.color)}
           </View>
