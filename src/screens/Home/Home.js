@@ -1,6 +1,7 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
+import * as Animatable from 'react-native-animatable';
 
 import CountryPicker from '../../components/CountryPicker/CountryPicker';
 import Result from '../../components/Result/Result';
@@ -9,46 +10,50 @@ import Snackbar from '../../components/Snackbar/Snackbar';
 import {loadStat} from '../../utils';
 import ExitApp from '../../components/ExitApp/ExitApp';
 
-const handleCountrySelected = name => {
-  if (!name) return;
-  loadStat(name);
-};
-
-const homeScreen = props => {
+const homeScreen = (props) => {
   const {homeState} = props;
+
+  const [countrySelectionMode, toggleCountrySelectionMode] = useState(false);
 
   useEffect(() => {
     loadStat(homeState.selectedCountry);
   }, []);
 
+  const handleCountrySelected = (name) => {
+    if (!name) return; // watch out (is it necessary)
+    toggleCountrySelectionMode(false);
+    loadStat(name);
+  };
+
   return (
     <View style={styles.root}>
-      <View style={styles.countryPicker}>
-        <Text style={styles.countrySelectorTitle}>Select Your Country</Text>
-        <CountryPicker isResultLoading={homeState.isResultLoading} countries={props.appState.supportedCountries} onSelect={handleCountrySelected} selectedCountry={homeState.selectedCountry} />
-      </View>
-      <View style={styles.result}>
-        {homeState.result ? (
-          <Result result={{countryName: homeState.result.country, death: homeState.result.death, infected: homeState.result.infected, recovered: homeState.result.recovered}} />
-        ) : null}
-      </View>
-      <ExitApp />
-      {/* <Snackbar /> */}
+      {countrySelectionMode ? (
+        <CountryPicker
+          exitCountrySelectionMode={() => toggleCountrySelectionMode(false)}
+          isResultLoading={homeState.isResultLoading} // watchout
+          countries={props.appState.supportedCountries}
+          handleCountrySelected={handleCountrySelected}
+          selectedCountry={homeState.selectedCountry} // watchout
+        />
+      ) : (
+        <>
+          <Animatable.View style={styles.result} animation="slideInLeft" duration={400}>
+            {homeState.result ? (
+              <Result
+                handleCountrySelectionMode={() => toggleCountrySelectionMode(true)}
+                result={{countryName: homeState.result.country, death: homeState.result.death, infected: homeState.result.infected, recovered: homeState.result.recovered}}
+              />
+            ) : null}
+          </Animatable.View>
+          <ExitApp />
+        </>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   root: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  countrySelectorTitle: {
-    textAlign: 'center',
-    fontSize: 17,
-  },
-  countryPicker: {
-    paddingVertical: 20,
-    backgroundColor: '#eee',
-    width: '100%',
-  },
   result: {
     flex: 1,
     justifyContent: 'center',
@@ -59,7 +64,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     appState: state.appReducer,
     homeState: state.homeReducer,

@@ -8,7 +8,7 @@ import {heightPercentageToDP as hp, widthPercentageToDP as wp} from 'react-nativ
 import {retryHomeResult} from '../../utils';
 import colors from '../../constants/colors';
 
-const result = ({result}) => {
+const result = ({result, handleCountrySelectionMode}) => {
   const {countryName, death, infected, recovered} = result;
 
   const hasAllData = [death, infected, recovered].every((ele) => typeof ele === 'number');
@@ -38,16 +38,16 @@ const result = ({result}) => {
           style={{
             backgroundColor: 'rgba(116, 147, 178, 0.200)',
             width: 100,
-            height: '100%',
-            borderColor: color,
-            borderLeftWidth: 2,
+            marginRight: 3,
             borderTopWidth: 2,
+            borderLeftWidth: 2,
             borderBottomWidth: 2,
             borderTopLeftRadius: 100,
             borderBottomLeftRadius: 100,
             justifyContent: 'center',
             alignItems: 'center',
-            marginRight: 3,
+            borderColor: color,
+            height: '100%',
             padding: 10,
           }}>
           <Text style={{...material.button, color: materialColors.blackSecondary, textTransform: 'uppercase', fontSize: 12}}>{name}</Text>
@@ -65,9 +65,9 @@ const result = ({result}) => {
     <>
       <View style={styles.titleBox}>
         <Text style={styles.title_text}>Showing the result for:</Text>
-        <View style={styles.title_countryBox}>
+        <TouchableOpacity onPress={handleCountrySelectionMode} style={styles.title_countryBox}>
           <Text style={styles.title_country}>{countryName}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.resultBox}>
         {digits.map((ele) => (
@@ -93,10 +93,10 @@ const styles = StyleSheet.create({
   },
   titleBox: {
     padding: 20,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     height: '30%',
-    // backgroundColor: 'red',
     width: '100%',
+    // backgroundColor: 'red',
   },
   title_text: {
     fontSize: 20,
@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '70%',
     width: '100%',
+    // backgroundColor: 'red',
   },
   resultInnerBox: {
     padding: 10,
@@ -132,28 +133,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  resultInnerBox_infected: {
-    backgroundColor: 'rgba(255, 255, 0, 0.300)',
-  },
-  resultInnerBox_death: {
-    backgroundColor: 'rgba(255, 0, 0, 0.100)',
-  },
-  resultInnerBox_recovered: {
-    backgroundColor: 'rgba(24, 221, 65, 0.100)',
-  },
-  resultInnerBox_title: {
-    textAlign: 'center',
-    backgroundColor: 'red',
-    padding: 20,
-    borderRadius: 100,
-  },
-  resultInnerBox_number: {
-    fontSize: 30,
-    padding: 10,
-    textAlign: 'center',
-    backgroundColor: 'purple',
-    width: '100%',
   },
 });
 
