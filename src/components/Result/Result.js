@@ -1,23 +1,46 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Button} from 'react-native-paper';
 import {material, materialColors, human} from 'react-native-typography';
 import numeral from 'numeral';
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import AwesomeButton from 'react-native-really-awesome-button/src/themes/rick';
+import Icon from 'react-native-vector-icons/Ionicons';
+import color from 'color';
 
 import {retryHomeResult} from '../../utils';
 import colors from '../../constants/colors';
+import stringDB from '../../storage/stringDB';
 
 const result = ({result, handleCountrySelectionMode}) => {
   const {countryName, death, infected, recovered} = result;
 
   const hasAllData = [death, infected, recovered].every((ele) => typeof ele === 'number');
 
+  const [state, setState] = useState({
+    isFav: false,
+  });
+
   const digits = [
     {name: 'Death', value: death, color: 'rgba(206, 71, 76, 0.200)'},
     {name: 'Infected', value: infected, color: 'rgba(207, 192, 82, 0.400)'},
     {name: 'Recovered', value: recovered, color: 'rgba(80, 206, 79, 0.400)'},
   ];
+
+  const toggleFav = async () => {
+    const arr = stringDB.data.bookmarkedCountries;
+    if (state.isFav) {
+      arr.splice(arr.indexOf(countryName), 1);
+    } else arr.push(countryName);
+    await stringDB.write();
+    setState({...state, isFav: !state.isFav});
+  };
+
+  useEffect(() => {
+    stringDB.read().then(() => {
+      setState({...state, isFav: stringDB.data.bookmarkedCountries.includes(countryName)});
+    });
+  }, [countryName]);
 
   const failedView = (
     <>
@@ -66,8 +89,42 @@ const result = ({result, handleCountrySelectionMode}) => {
       <View style={styles.titleBox}>
         <Text style={styles.title_text}>Showing the result for:</Text>
         <TouchableOpacity onPress={handleCountrySelectionMode} style={styles.title_countryBox}>
-          <Text style={styles.title_country}>{countryName}</Text>
+          <Text size={20} color={colors.primaryGrayish} style={styles.title_country}>
+            {countryName}
+          </Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.buttonBox}>
+        <View>
+          <AwesomeButton
+            backgroundColor={colors.primaryGrayish}
+            type="secondary"
+            borderColor={color(colors.primaryGrayish).whiten(0.6).hex()}
+            backgroundActive={color(colors.primaryGrayish).whiten(1).hex()}
+            borderRadius={10}
+            disabled
+            style={{marginRight: wp(7)}}>
+            <View style={{...styles.buttonIconHolder}}>
+              <Icon color="#fff" name="md-undo" />
+            </View>
+          </AwesomeButton>
+          {/* <Text style={{...material.button, fontSize: 5}}>Show Previous Day</Text> */}
+        </View>
+
+        <View>
+          <AwesomeButton
+            backgroundColor={colors.primaryGrayish}
+            type="secondary"
+            onPress={toggleFav}
+            borderColor={color(colors.primaryGrayish).whiten(0.6).hex()}
+            backgroundActive={color(colors.primaryGrayish).whiten(1).hex()}
+            borderRadius={10}>
+            <View style={styles.buttonIconHolder}>
+              <Icon size={20} color={state.isFav ? '#67cbc3' : '#fff'} name="md-heart" />
+            </View>
+          </AwesomeButton>
+          {/* <Text>Add To Bookmark</Text> */}
+        </View>
       </View>
       <View style={styles.resultBox}>
         {digits.map((ele) => (
@@ -89,14 +146,15 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
   },
   titleBox: {
     padding: 20,
     justifyContent: 'flex-end',
-    height: '30%',
+    // height: '20%',
     width: '100%',
-    // backgroundColor: 'red',
+    paddingVertical: hp(5),
+    // backgroundColor: 'blue',
   },
   title_text: {
     fontSize: 20,
@@ -123,9 +181,10 @@ const styles = StyleSheet.create({
   },
   resultBox: {
     justifyContent: 'center',
-    height: '70%',
+    // height: '70%',
+    // backgroundColor: 'pink',
     width: '100%',
-    // backgroundColor: 'red',
+    paddingVertical: hp(5),
   },
   resultInnerBox: {
     padding: 10,
@@ -133,6 +192,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  buttonBox: {
+    flexDirection: 'row',
+    // backgroundColor: 'red',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  buttonIconHolder: {
+    // backgroundColor: 'pink',
+    width: 50,
+    // overflow: 'hidden',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
   },
 });
 

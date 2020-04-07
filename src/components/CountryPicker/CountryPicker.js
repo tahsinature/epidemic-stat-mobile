@@ -9,6 +9,7 @@ import color from 'color';
 import * as Animatable from 'react-native-animatable';
 
 import colors from '../../constants/colors';
+import SingleCountry from '../SingleCountry/SingleCountry';
 
 const countryPicker = (props) => {
   const {isResultLoading, selectedCountry, countries, handleCountrySelected, exitCountrySelectionMode} = props; // remove unncessary
@@ -21,6 +22,7 @@ const countryPicker = (props) => {
 
   const filter = (value) => {
     updateSearchValue(value);
+    value = value.toLowerCase();
     const newCountries = countries.filter((country) => (country.name ? country.name.toLowerCase().includes(value) : country.toLowerCase().includes(value)));
     filterCountries(newCountries);
   };
@@ -32,14 +34,9 @@ const countryPicker = (props) => {
 
   const getSingleCountry = (country, backgroundColor) => {
     return (
-      <TouchableOpacity style={{...styles.singleCountryBox, backgroundColor}} onPress={() => handleCountrySelected(country.name || country)}>
-        {country.flag ? (
-          <Avatar.Image source={{uri: country.flag}} size={hp(4)} style={{marginRight: wp(5)}} />
-        ) : (
-          <Avatar.Text label={country.alpha2Code || country[0].toUpperCase()} size={hp(4)} style={{marginRight: wp(5)}} />
-        )}
-        <Text style={{...material.titleObject}}>{country.name || country}</Text>
-      </TouchableOpacity>
+      <View style={{height: hp(7)}}>
+        <SingleCountry country={country} backgroundColor={backgroundColor} clicked={() => handleCountrySelected(country.name || country)} />
+      </View>
     );
   };
 
@@ -71,7 +68,11 @@ const countryPicker = (props) => {
         />
       </View>
       <View style={styles.bottomContent}>
-        <FlatList data={currentCountries} renderItem={({item, index}) => getSingleCountry(item, index % 2 === 0 ? '#fff' : rgba('#f6fbff', 0.1))} keyExtractor={(item) => item.name || item} />
+        <FlatList
+          data={currentCountries}
+          renderItem={({item, index}) => getSingleCountry(item, index % 2 === 0 ? colors.countryList.even : colors.countryList.odd)}
+          keyExtractor={(item) => item.name || item}
+        />
       </View>
     </Animatable.View>
   );
@@ -93,12 +94,6 @@ const styles = StyleSheet.create({
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  singleCountryBox: {
-    paddingHorizontal: wp(8),
-    height: hp(7),
-    flexDirection: 'row',
     alignItems: 'center',
   },
 });

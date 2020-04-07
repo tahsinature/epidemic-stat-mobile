@@ -1,22 +1,29 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import stringDB from '../../storage/stringDB';
+import colors from '../../constants/colors';
 
 const introAlert = (props) => {
   const {clicked} = props;
   const [isShowing, toggleShow] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem('isWelcomeNoteUnderstood').then((isWelcomeNoteUnderstood) => {
-      isWelcomeNoteUnderstood = isWelcomeNoteUnderstood === 'true';
-      if (isWelcomeNoteUnderstood) clicked();
-      else toggleShow(true);
-    });
+    stringDB
+      .read()
+      .then(() => {
+        if (stringDB.data.appSettings.tourCompleted) {
+          clicked();
+        } else toggleShow(true);
+      })
+      .catch((err) => {
+        // alert(err.message);
+      });
   }, []);
 
   const understandingHandler = () => {
-    AsyncStorage.setItem('isWelcomeNoteUnderstood', 'true').then(() => {
+    stringDB.data.appSettings.tourCompleted = true;
+    stringDB.write().then(() => {
       clicked();
     });
   };
@@ -33,7 +40,7 @@ const introAlert = (props) => {
         confirmText="Understood"
         closeOnTouchOutside={false}
         closeOnHardwareBackPress={false}
-        confirmButtonColor="#DD6B55"
+        confirmButtonColor={colors.primaryGrayish}
         onConfirmPressed={understandingHandler}
       />
     </View>

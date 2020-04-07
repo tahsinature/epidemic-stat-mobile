@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StatusBar} from 'react-native';
 import {connect} from 'react-redux';
+import {MenuProvider} from 'react-native-popup-menu';
 
 import {bootUp} from './src/utils';
 
@@ -12,6 +13,7 @@ import UpdateNeeded from './src/components/UpdateNeeded/UpdateNeeded';
 import Snackbar from './src/components/Snackbar/Snackbar';
 import TestComponent from './src/components/TestComponent/TestComponent';
 import IntroAlert from './src/components/IntroAlert/IntroAlert';
+import colors from './src/constants/colors';
 
 const app = (props) => {
   const [hasIntroPassed, passIntro] = useState(false);
@@ -25,7 +27,7 @@ const app = (props) => {
         <UpdateNeeded />
       ) : (
         <>
-          <StatusBar barStyle="default" />
+          <StatusBar barStyle="default" backgroundColor={colors.primaryGrayish} />
           <BottomTab />
         </>
       )}
@@ -36,10 +38,12 @@ const app = (props) => {
 
   return (
     <>
-      {props.appState.isManifestLoading ? <AppBootAnimation /> : props.appState.isManifestLoaded ? mainContent : null}
-      {props.appState.isFetchingData ? <DataFetchingAnimation /> : null}
-      {props.appState.dataFetchError.isError ? <DataFetchError /> : null}
-      {/* <Snackbar /> */}
+      <MenuProvider>
+        {props.appState.isManifestLoading ? <AppBootAnimation /> : props.appState.isManifestLoaded ? mainContent : null}
+        {props.appState.isFetchingData ? <DataFetchingAnimation /> : null}
+        {props.appState.dataFetchError.isError ? <DataFetchError /> : null}
+        {/* <Snackbar /> */}
+      </MenuProvider>
     </>
   );
 };

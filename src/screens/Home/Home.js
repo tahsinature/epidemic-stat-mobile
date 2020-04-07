@@ -17,6 +17,12 @@ const homeScreen = (props) => {
 
   useEffect(() => {
     loadStat(homeState.selectedCountry);
+    props.navigation.addListener('blur', () => {
+      toggleCountrySelectionMode(false);
+    });
+    return () => {
+      props.navigation.removeListener('blur');
+    };
   }, []);
 
   const handleCountrySelected = (name) => {
