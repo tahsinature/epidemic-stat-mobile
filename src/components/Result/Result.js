@@ -120,7 +120,7 @@ const result = ({result, handleCountrySelectionMode}) => {
             backgroundActive={color(colors.primaryGrayish).whiten(1).hex()}
             borderRadius={10}>
             <View style={styles.buttonIconHolder}>
-              <Icon size={20} color={state.isFav ? '#67cbc3' : '#fff'} name="md-heart" />
+              <Icon size={20} color={state.isFav ? '#67cbc3' : '#fff'} name="md-bookmark" />
             </View>
           </AwesomeButton>
           {/* <Text>Add To Bookmark</Text> */}
