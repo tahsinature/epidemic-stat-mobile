@@ -59,4 +59,4 @@ buck-out/
 /ios/Pods/
 
 # Tahsin's Custom
-*.apk
+android/app/release/
