@@ -16,10 +16,12 @@ android {
 }
 ```
 
-- to kill all running things `killall node`
-
 ### To increase version
 
 - first commit current changes (otherwise during postversion command it will ammend to last commit)
 - change the version in `package.json` manually
 - then run `npm run postversion`
+
+### Tips
+
+- to kill all running things `killall node`
