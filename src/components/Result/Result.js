@@ -1,12 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {Button} from 'react-native-paper';
+import React, {useState, useEffect, createRef} from 'react';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Button, Text} from 'react-native-paper';
 import {material, materialColors, human} from 'react-native-typography';
 import numeral from 'numeral';
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import AwesomeButton from 'react-native-really-awesome-button/src/themes/rick';
 import Icon from 'react-native-vector-icons/Ionicons';
 import color from 'color';
+import {Tooltip} from 'react-native-elements';
 
 import {retryHomeResult} from '../../utils';
 import colors from '../../constants/colors';
@@ -19,7 +20,10 @@ const result = ({result, handleCountrySelectionMode}) => {
 
   const [state, setState] = useState({
     isFav: false,
+    isTooltipVisible: true,
   });
+
+  const lastDayButtonTooltip = createRef();
 
   const digits = [
     {name: 'Death', value: death, color: 'rgba(206, 71, 76, 0.200)'},
@@ -54,9 +58,9 @@ const result = ({result, handleCountrySelectionMode}) => {
   const capsule = (name, value, color) => {
     const formats = ['0,', '0a'];
     const [currentFormat, nextFormat] = useState(formats[0]);
-
     return (
       <View style={{flexDirection: 'row', alignItems: 'center', height: hp(12.6)}}>
+        {/* <RNTooltips text={'Long Press Description'} visible={true} target={this.state.target} parent={this.state.parent} /> */}
         <View
           style={{
             backgroundColor: 'rgba(116, 147, 178, 0.200)',
@@ -84,6 +88,12 @@ const result = ({result, handleCountrySelectionMode}) => {
     );
   };
 
+  const toolTipView = (
+    <View>
+      <Text style={{color: '#fff'}}>Seeing last day result feature will be available soon.</Text>
+    </View>
+  );
+
   const successView = (
     <>
       <View style={styles.titleBox}>
@@ -95,19 +105,21 @@ const result = ({result, handleCountrySelectionMode}) => {
         </TouchableOpacity>
       </View>
       <View style={styles.buttonBox}>
-        <View>
-          <AwesomeButton
-            backgroundColor={colors.primaryGrayish}
-            type="secondary"
-            borderColor={color(colors.primaryGrayish).whiten(0.6).hex()}
-            backgroundActive={color(colors.primaryGrayish).whiten(1).hex()}
-            borderRadius={10}
-            disabled
-            style={{marginRight: wp(7)}}>
-            <View style={{...styles.buttonIconHolder}}>
-              <Icon color="#fff" name="md-undo" />
-            </View>
-          </AwesomeButton>
+        <View onTouchStart={() => lastDayButtonTooltip.current.toggleTooltip()}>
+          <Tooltip popover={toolTipView} ref={lastDayButtonTooltip} height={60}>
+            <AwesomeButton
+              backgroundColor={colors.primaryGrayish}
+              type="secondary"
+              borderColor={color(colors.primaryGrayish).whiten(0.6).hex()}
+              backgroundActive={color(colors.primaryGrayish).whiten(1).hex()}
+              borderRadius={10}
+              disabled
+              style={{marginRight: wp(7)}}>
+              <View style={{...styles.buttonIconHolder}}>
+                <Icon color="#fff" name="md-undo" />
+              </View>
+            </AwesomeButton>
+          </Tooltip>
           {/* <Text style={{...material.button, fontSize: 5}}>Show Previous Day</Text> */}
         </View>
 
